@@ -1,4 +1,4 @@
-# REST-DOC - VRaptor REST services documentation generator
+## REST-DOC - VRaptor REST services documentation generator
 
 This project consists in a Maven plugin to automatic generate REST services created with VRaptor.
 The documentation is generated in Json format.
@@ -15,78 +15,87 @@ The methods are identified as services by rest-doc by having the following annot
 
 
 Each method that has one of these annotations has the following extracted information:
-- Description: the javadoc description
-- Parameters: the javadoc @param tag, with one tag for each parameter
-- Request method: the request method of the service (GET, POST, PUT, DELETE, PATH), defined by the VRaptor annotation
-- Returns: the service return description, identified by javadoc @return tag
-- Return example: a return example on Json format, identified by javadoc @returnExample tag
-- Exceptions: the exception throws by the service, identified by javadoc @throws tag
-- Path URI: the URI's defined on service annotation
-- Calls to other services: with @calls annotation you can inform wich other services are invoked by the service
 
+- **Description**: the javadoc description
+- **Parameters**: the javadoc @param tag, with one tag for each parameter
+- **Request method**: the request method of the service (GET, POST, PUT, DELETE, PATH), defined by the VRaptor annotation
+- **Returns**: the service return description, identified by javadoc @return tag
+- **Return example**: a return example on Json format, identified by javadoc @returnExample tag
+- **Exceptions**: the exception throws by the service, identified by javadoc @throws tag
+- **Path URI**: the URI's defined on service annotation
+- **Calls to other services**: with @calls annotation you can inform wich other services are invoked by the service  
+  
+
+<pre>
 Example:
 <code>
-	/**
-	 * Find client by id
-	 * @param id
-	 * @return client on json format
-	 * @returnExample
-	 * { "name": "Paulo", "profissao": "Jornalista", "idade": 40 } 
-	 * @throws DataException
-	   @calls br.com.pacote1.nomeDoServico, outroServico() , pacote2.umOutroServico(), com.pacote2.esseEhOutroServico(String param)
-	 */
-@Get("/get/client/{id}")
-public Client getClient(Integer Id) throws DataException {
-...
+/**  
+ * Find client by id  
+ * @param id  
+ * @return client on json format  
+ * @returnExample  
+ * { "name": "Paulo", "profissao": "Jornalista", "idade": 40 }  
+ * @throws DataException  
+ *  @calls br.com.pacote1.nomeDoServico, outroServico() , pacote2.umOutroServico(), com.pacote2.esseEhOutroServico(String param)
+ */
+@Get("/get/client/{id}")  
+public Client getClient(Integer Id) throws DataException {  
+...  
 }
 </code>
+</pre>
 
-Rest-doc result would be:
-<code>
-[
-  {
-    "pathURI":"/get/client/{id}",
-    "description":"Find client id",
-    "serviceMethod":"br.com.blah.controllers.ClientController.getClient(Integer)",
-    "requestType":"Get",
-    "returns":"client on json format",
-    "returnExample": { "name": "Paulo", "profissao": "Jornalista", "idade": 40 }
-    "parameters":["id"],
-    "throws":["DataException"],
-    "calls": ["br.com.pacote1.nomeDoServico, outroServico() , pacote2.umOutroServico(), com.pacote2.esseEhOutroServico(String param)"]
-  }
+Rest-doc result would be:  
+<pre>
+<code>  
+[  
+  {  
+    "pathURI":"/get/client/{id}",  
+    "description":"Find client id",  
+    "serviceMethod":"br.com.blah.controllers.ClientController.getClient(Integer)",  
+    "requestType":"Get",  
+    "returns":"client on json format",  
+    "returnExample": { "name": "Paulo", "profissao": "Jornalista", "idade": 40 },  
+    "parameters":["id"],  
+    "throws":["DataException"],  
+    "calls": ["br.com.pacote1.nomeDoServico, outroServico(),  
+    pacote2.umOutroServico(), com.pacote2.esseEhOutroServico(String param)"]  
+  }  
 ]
 </code>
-
+</pre>
 
 ## Plugin configuration
 
 After the plugin installation on your local repository, the plugin should be added to your project pom.xml, where the classes to be documented are:
 
+<pre>
 <code>
-	<plugins>
-            <plugin>
-                <groupId>rest-doc</groupId>
-                <artifactId>rest-doc</artifactId>
-                <version>1.0.1-SNAPSHOT</version>
-                <configuration>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>rest-doc</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+	&lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;rest-doc&lt;/groupId&gt;
+                &lt;artifactId&gt;rest-doc&lt;/artifactId&gt;
+                &lt;version&gt;1.0.1-SNAPSHOT&lt;/version&gt;
+                &lt;configuration&gt;
+                &lt;/configuration&gt;
+                &lt;executions&gt;
+                    &lt;execution&gt;
+                        &lt;goals&gt;
+                            &lt;goal&gt;rest-doc&lt;/goal&gt;
+                        &lt;/goals&gt;
+                    &lt;/execution&gt;
+                &lt;/executions&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
 </code>
+</pre>
 
-Optional configuration parameters:
-- outputDirectory: path to where the output javaScript file should be saved (default: "${project.basedir}/")
-- outputFileName: name of the output file (default: "rest-doc.js")
-- sourceDirectory: path to the source files that will be documented (default: "${project.basedir}/src/main")
-- serviceFileNamePattern: regex to filter the files that will be documented (default: "^.*Controller\.java$")
+Optional configuration parameters:  
+
+- **outputDirectory**: path to where the output javaScript file should be saved (default: "${project.basedir}/")
+- **outputFileName**: name of the output file (default: "rest-doc.js")  
+- **sourceDirectory**: path to the source files that will be documented (default: "${project.basedir}/src/main")  
+- **serviceFileNamePattern**: regex to filter the files that will be documented (default: "^.*Controller\.java$")  
 
 
 ## Usage example
