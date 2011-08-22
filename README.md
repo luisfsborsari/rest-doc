@@ -26,8 +26,8 @@ Each method that has one of these annotations has the following extracted inform
 - **Calls to other services**: with @calls annotation you can inform wich other services are invoked by the service  
   
 
-<pre>
 Example:
+<pre>
 <code>
 /**  
  * Find client by id  
@@ -92,7 +92,7 @@ After the plugin installation on your local repository, the plugin should be add
 
 Optional configuration parameters:  
 
-- **outputDirectory**: path to where the output javaScript file should be saved (default: "${project.basedir}/")
+- **outputDirectory**: path to where the output javaScript file should be saved (default: "${project.build.directory}/")
 - **outputFileName**: name of the output file (default: "rest-doc.js")  
 - **sourceDirectory**: path to the source files that will be documented (default: "${project.basedir}/src/main")  
 - **serviceFileNamePattern**: regex to filter the files that will be documented (default: "^.*Controller\.java$")  

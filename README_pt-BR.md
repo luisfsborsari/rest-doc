@@ -23,10 +23,11 @@ Cada método que possua uma destas anotações tem as seguintes informações ex
 - **Exceções**: As exceções lançadas pelo serviço identificadas pela tag @throws, com uma tag para cada exceção.
 - **URI do serviço**: a URI que está definida na annotation
 - **Chamadas a outros serviços**: com a anotação @calls, pode-se informar quais outros serviços são invocados pelo serviço em questão. Os nomes 
-dos serviços devem ser escritos entre vírgulas. Não há necessidade de escrever o nome completo e nem os parâmetros.
+dos serviços devem ser escritos entre vírgulas. Não há necessidade de escrever o nome completo e nem os parâmetros.  
+  
 
-<pre>
 Exemplo:
+<pre>
 <code>
 /**
  * Busca cliente por id
@@ -92,7 +93,7 @@ Após a instalação do plugin no repositório local, o plugin deve ser adiciona
 
 Parametros opcionais de configuração:
 
-- **outputDirectory**: caminho onde o arquivo contendo o JSON deve ser salvo (Valor Padrão: "${project.basedir}/")
+- **outputDirectory**: caminho onde o arquivo contendo o JSON deve ser salvo (Valor Padrão: "${project.build.directory}/")
 - **outputFileName**: nome do arquivo contendo o JSON (Valor Padrão: "rest-doc.js")	
 - **sourceDirectory**: caminho onde os arquivos fontes que serão documentados se encontram (Valor Padrão: "${project.basedir}/src/main")
 - **serviceFileNamePattern**: expressão regular para filtrar os arquivos java a serem documentados (Valor Padrão: "^.*Controller\.java$")
