@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>fake</groupId>
+	<artifactId>fake-project</artifactId>
+	<packaging>jar</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Fake project</name>
+
+	<dependencies>
+		<!-- VRaptor -->
+		<dependency>
+			<groupId>br.com.caelum</groupId>
+			<artifactId>vraptor</artifactId>
+			<version>3.3.1</version>
+		</dependency>
+
+		<!-- JUnit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- Compila com java 6 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>rest-doc</groupId>
+				<artifactId>rest-doc</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+				<configuration>
+					<sourceDirectory>${basedir}/src/test/java</sourceDirectory>
+					<sourcePath>${basedir}/src/test/java</sourcePath>
+					<outputDirectory>${basedir}</outputDirectory>
+					<outputFileName>rest-doc.js</outputFileName>
+					<serviceFileNamePattern>^.*Controller\\.java$</serviceFileNamePattern>
+					<!-- The defined stubs -->
+					<project implementation="br.com.restdoc.RestDocProjectStub" />
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>rest-doc</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
