@@ -72,22 +72,24 @@ Após a instalação do plugin no repositório local, o plugin deve ser adiciona
 
 <pre>
 <code>
+&lt;build&gt;
 	&lt;plugins&gt;
-            &lt;plugin&gt;
-                &lt;groupId&gt;rest-doc&lt;/groupId&gt;
-                &lt;artifactId&gt;rest-doc&lt;/artifactId&gt;
-                &lt;version&gt;1.0.1-SNAPSHOT&lt;/version&gt;
-                &lt;configuration&gt;
-                &lt;/configuration&gt;
-                &lt;executions&gt;
-                    &lt;execution&gt;
-                        &lt;goals&gt;
-                            &lt;goal&gt;rest-doc&lt;/goal&gt;
-                        &lt;/goals&gt;
-                    &lt;/execution&gt;
-                &lt;/executions&gt;
-            &lt;/plugin&gt;
-        &lt;/plugins&gt;
+		&lt;plugin&gt;
+			&lt;groupId&gt;rest-doc&lt;/groupId&gt;
+			&lt;artifactId&gt;rest-doc&lt;/artifactId&gt;
+			&lt;version&gt;1.0.1-SNAPSHOT&lt;/version&gt;
+			&lt;configuration&gt;
+			&lt;/configuration&gt;
+			&lt;executions&gt;
+				&lt;execution&gt;
+					&lt;goals&gt;
+						&lt;goal&gt;rest-doc&lt;/goal&gt;
+					&lt;/goals&gt;
+				&lt;/execution&gt;
+			&lt;/executions&gt;
+		&lt;/plugin&gt;
+	&lt;/plugins&gt;
+&lt;/build&gt;
 </code>
 </pre>
 
