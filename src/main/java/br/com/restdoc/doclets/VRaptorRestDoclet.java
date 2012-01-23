@@ -12,6 +12,7 @@ import br.com.restdoc.RestService;
 import br.com.restdoc.mojos.RestServiceMojo;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.AnnotationDesc.ElementValuePair;
 import com.sun.javadoc.ClassDoc;
@@ -25,7 +26,7 @@ import com.sun.javadoc.Tag;
  *         06/06/2011 09:34:21
  */
 public class VRaptorRestDoclet {
-	
+
 	public static final String PATH = VRaptorRestDoclet.class.getName();
 
 	static final String PARAM_TAG_ANNOTATION = "@param";
@@ -37,12 +38,19 @@ public class VRaptorRestDoclet {
 	public static boolean start(RootDoc root) throws Exception {
 		VRaptorRestDoclet doclet = new VRaptorRestDoclet();
 		List<RestService> restServices = doclet.findRestServices(root);
-		String servicesJson = (new Gson()).toJson(restServices).replaceAll("(\\\\n|\\\\t)", "");
-		VRaptorRestDoclet.writeFile(servicesJson, RestServiceMojo.getOutputFile());
+		String servicesJson = VRaptorRestDoclet.createGson().toJson(restServices).replaceAll(
+				"(\\\\n|\\\\t)", "");
+		VRaptorRestDoclet.writeFile(servicesJson,
+				RestServiceMojo.getOutputFile());
 		return true;
 	}
 
-	public static void writeFile(String restServicesJson, File outputFile) throws Exception {
+	private static Gson createGson() {
+		return new GsonBuilder().setPrettyPrinting().create();
+	}
+
+	public static void writeFile(String restServicesJson, File outputFile)
+			throws Exception {
 
 		FileWriter fileWriter = null;
 		try {
@@ -60,7 +68,7 @@ public class VRaptorRestDoclet {
 			}
 		}
 	}
-	
+
 	List<RestService> findRestServices(RootDoc root) {
 		List<RestService> restServices = new ArrayList<RestService>();
 
@@ -81,7 +89,8 @@ public class VRaptorRestDoclet {
 		// Get service Path
 		AnnotationDesc pathAnnotationDesc = getPathAnnotation(methodDoc);
 		AnnotationDesc restAnnotationDesc = getMethodRestAnnotation(methodDoc);
-		String servicePath = pathURI + findServiceURI(pathAnnotationDesc) + findServiceURI(restAnnotationDesc);
+		String servicePath = pathURI + findServiceURI(pathAnnotationDesc)
+				+ findServiceURI(restAnnotationDesc);
 
 		// Method
 		String methodTag = methodDoc.qualifiedName() + methodDoc.signature();
@@ -95,20 +104,25 @@ public class VRaptorRestDoclet {
 
 		// Doc info
 		List<String> parameters = getDocInfo(methodDoc, PARAM_TAG_ANNOTATION);
-		String returns = getFirstItemOrNewString(getDocInfo(methodDoc, RETURN_TAG_ANNOTATION));
-		String returnExample = getFirstItemOrNewString(getDocInfo(methodDoc, RETURN_EXAMPLE_TAG_ANNOTATION));
+		String returns = getFirstItemOrNewString(getDocInfo(methodDoc,
+				RETURN_TAG_ANNOTATION));
+		String returnExample = getFirstItemOrNewString(getDocInfo(methodDoc,
+				RETURN_EXAMPLE_TAG_ANNOTATION));
 		List<String> throwsInfo = getDocInfo(methodDoc, THROWS_TAG_ANNOTATION);
 		List<String> calls = getDocInfo(methodDoc, CALLS_TAG_ANNOTATION);
-		
-		return new RestService.Builder(servicePath, requestType).wihtParameters(parameters)
-				.withReturns(returns).withReturnExample(returnExample).withExceptionThrows(throwsInfo)
-				.withCalls(calls).withServiceMethod(methodTag).withDescription(description).build();
+
+		return new RestService.Builder(servicePath, requestType)
+				.wihtParameters(parameters).withReturns(returns)
+				.withReturnExample(returnExample)
+				.withExceptionThrows(throwsInfo).withCalls(calls)
+				.withServiceMethod(methodTag).withDescription(description)
+				.build();
 	}
-	
-	private String getFirstItemOrNewString(List<String> list){
+
+	private String getFirstItemOrNewString(List<String> list) {
 		return list.isEmpty() ? "" : list.get(0);
 	}
-	
+
 	List<String> getDocInfo(MethodDoc methodDoc, String paramTag) {
 		List<String> params = new ArrayList<String>();
 		for (Tag tag : methodDoc.tags(paramTag)) {

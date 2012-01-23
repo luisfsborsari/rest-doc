@@ -57,7 +57,7 @@ public class RestServiceMojo extends AbstractMojo {
 	 * @required
 	 */
 	private String outputDirectory;
-	
+
 	/**
 	 * Name of the generated file.
 	 * 
@@ -79,7 +79,7 @@ public class RestServiceMojo extends AbstractMojo {
 	 * @required
 	 */
 	private String sourcePath;
-	
+
 	private File sourceDir;
 
 	private File outputDir;
@@ -92,11 +92,11 @@ public class RestServiceMojo extends AbstractMojo {
 	public static File getOutputFile() {
 		return outputFile;
 	}
-	
+
 	public static void setOutputFile(File outputFileParam) {
 		outputFile = outputFileParam;
 	}
-	
+
 	String getOutputFileName() {
 		return outputFileName;
 	}
@@ -108,49 +108,60 @@ public class RestServiceMojo extends AbstractMojo {
 	File getOutputDir() {
 		return outputDir;
 	}
-	
-	MavenProject getProject(){
+
+	MavenProject getProject() {
 		return project;
 	}
-	
-	private File tryToCreateDir(String filePath, String errorMessage) throws MojoExecutionException {
+
+	private File tryToCreateDir(String filePath, String errorMessage)
+			throws MojoExecutionException {
 		File file = new File(filePath);
 		if (!file.exists()) {
 			throw new MojoExecutionException(errorMessage);
 		}
 		return file;
 	}
-	
+
 	private void deleteOuputFile(File outputFile) throws MojoExecutionException {
 		if (!outputFile.delete()) {
-			throw new MojoExecutionException("File " + outputFile.getAbsolutePath() + " could not be deleted");
+			throw new MojoExecutionException("File "
+					+ outputFile.getAbsolutePath() + " could not be deleted");
 		}
 	}
 
-	private File createOutputFileOnSuccess(File outputDir, String outputFileName) throws MojoExecutionException {
+	private File createOutputFileOnSuccess(File outputDir, String outputFileName)
+			throws MojoExecutionException {
 		try {
 			File ouputFile = new File(outputDir, outputFileName);
 			if (!new File(outputDir, outputFileName).createNewFile()) {
-				throw new MojoExecutionException("File " + outputFile.getAbsolutePath() + " could not be created");
+				throw new MojoExecutionException("File "
+						+ outputFile.getAbsolutePath()
+						+ " could not be created");
 			}
 			return ouputFile;
 		} catch (IOException e) {
-			throw new MojoExecutionException("File " + outputFile.getAbsolutePath() + " could not be created");
+			throw new MojoExecutionException("File "
+					+ outputFile.getAbsolutePath() + " could not be created");
 		}
 	}
 
-	private File createOutputFile(File outputDir, String outputFileName) throws MojoExecutionException {
+	private File createOutputFile(File outputDir, String outputFileName)
+			throws MojoExecutionException {
 		File outputFile = new File(outputDir, outputFileName);
 		if (outputFile.exists()) {
-			getLog().info("File " + outputFile.getAbsolutePath() + " already exists and will be overwrited");
+			getLog().info(
+					"File " + outputFile.getAbsolutePath()
+							+ " already exists and will be overwrited");
 			deleteOuputFile(outputFile);
 		}
 		return createOutputFileOnSuccess(outputDir, outputFileName);
 	}
 
 	void filesTreatment() throws MojoExecutionException {
-		sourceDir = tryToCreateDir(sourceDirectory, "Source directory " + sourceDirectory + " doesn't exists");
-		outputDir = tryToCreateDir(outputDirectory, "Output directory " + outputDirectory + " doesn't exists");
+		sourceDir = tryToCreateDir(sourceDirectory, "Source directory "
+				+ sourceDirectory + " doesn't exists");
+		outputDir = tryToCreateDir(outputDirectory, "Output directory "
+				+ outputDirectory + " doesn't exists");
 		outputFile = createOutputFile(outputDir, outputFileName);
 	}
 
@@ -159,12 +170,14 @@ public class RestServiceMojo extends AbstractMojo {
 		Map<String, Artifact> compileArtifactMap = new HashMap<String, Artifact>();
 
 		classpathElements.addAll(getProjectBuildOutputDirs(project));
-		populateDependencyArtifactMap(compileArtifactMap, getCompileArtifacts(project));
+		populateDependencyArtifactMap(compileArtifactMap,
+				getCompileArtifacts(project));
 
 		for (Artifact a : compileArtifactMap.values()) {
 			classpathElements.add(a.getFile().toString());
 		}
-		return StringUtils.join(classpathElements.iterator(), File.pathSeparator);
+		return StringUtils.join(classpathElements.iterator(),
+				File.pathSeparator);
 	}
 
 	private List<String> getProjectBuildOutputDirs(MavenProject p) {
@@ -176,12 +189,14 @@ public class RestServiceMojo extends AbstractMojo {
 
 	@SuppressWarnings("unchecked")
 	private List<Artifact> getCompileArtifacts(MavenProject p) {
-		return (p.getCompileArtifacts() == null ? Collections.<Artifact> emptyList() : new LinkedList<Artifact>(
+		return (p.getCompileArtifacts() == null ? Collections
+				.<Artifact> emptyList() : new LinkedList<Artifact>(
 				p.getCompileArtifacts()));
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateDependencyArtifactMap(Map<String, Artifact> compileArtifactMap,
+	private void populateDependencyArtifactMap(
+			Map<String, Artifact> compileArtifactMap,
 			Collection<Artifact> artifactList) throws MavenReportException {
 		if (artifactList == null) {
 			return;
@@ -192,19 +207,26 @@ public class RestServiceMojo extends AbstractMojo {
 
 			if (file == null) {
 				throw new MavenReportException("Error in plugin descriptor - "
-						+ "dependency was not resolved for artifact: " + newArtifact.getGroupId() + ":"
-						+ newArtifact.getArtifactId() + ":" + newArtifact.getVersion());
+						+ "dependency was not resolved for artifact: "
+						+ newArtifact.getGroupId() + ":"
+						+ newArtifact.getArtifactId() + ":"
+						+ newArtifact.getVersion());
 			}
 			if (compileArtifactMap.get(newArtifact.getDependencyConflictId()) != null) {
-				Artifact oldArtifact = compileArtifactMap.get(newArtifact.getDependencyConflictId());
+				Artifact oldArtifact = compileArtifactMap.get(newArtifact
+						.getDependencyConflictId());
 
-				ArtifactVersion oldVersion = new DefaultArtifactVersion(oldArtifact.getVersion());
-				ArtifactVersion newVersion = new DefaultArtifactVersion(newArtifact.getVersion());
+				ArtifactVersion oldVersion = new DefaultArtifactVersion(
+						oldArtifact.getVersion());
+				ArtifactVersion newVersion = new DefaultArtifactVersion(
+						newArtifact.getVersion());
 				if (newVersion.compareTo(oldVersion) > 0) {
-					compileArtifactMap.put(newArtifact.getDependencyConflictId(), newArtifact);
+					compileArtifactMap.put(
+							newArtifact.getDependencyConflictId(), newArtifact);
 				}
 			} else {
-				compileArtifactMap.put(newArtifact.getDependencyConflictId(), newArtifact);
+				compileArtifactMap.put(newArtifact.getDependencyConflictId(),
+						newArtifact);
 			}
 		}
 	}
@@ -234,9 +256,10 @@ public class RestServiceMojo extends AbstractMojo {
 			Utils.findFiles(sourceDir, javadocParameters, fileFilter);
 
 			try {
-				com.sun.tools.javadoc.Main.execute(javadocParameters.toArray(new String[javadocParameters.size()]));
+				com.sun.tools.javadoc.Main.execute(javadocParameters
+						.toArray(new String[javadocParameters.size()]));
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new MojoExecutionException("Something went wrong while generating the javadoc", e);
 			}
 		} catch (PatternSyntaxException e) {
 			throw new MojoExecutionException("Invalid regular expression", e);

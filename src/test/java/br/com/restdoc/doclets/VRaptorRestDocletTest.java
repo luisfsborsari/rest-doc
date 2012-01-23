@@ -34,8 +34,7 @@ import com.sun.javadoc.Tag;
 public class VRaptorRestDocletTest {
 
 	private static VRaptorRestDoclet vraptorRestDoclet;
-	private static String ELEMENT_TAG = "value";
-	
+
 	AnnotationDesc annotationDesc = mock(AnnotationDesc.class);
 	ElementValuePair elementValuePair = mock(ElementValuePair.class);
 	AnnotationValue annotationValue = mock(AnnotationValue.class);
@@ -48,7 +47,7 @@ public class VRaptorRestDocletTest {
 	ElementValuePair controllerElementValuePair = mock(ElementValuePair.class);
 	AnnotationValue controllerAnnotationValue = mock(AnnotationValue.class);
 	AnnotationTypeDoc controllerAnnotationTypeDoc = mock(AnnotationTypeDoc.class);
-	
+
 	@BeforeClass
 	public static void setUp() {
 		vraptorRestDoclet = new VRaptorRestDoclet();
@@ -61,57 +60,71 @@ public class VRaptorRestDocletTest {
 
 	@Test
 	public void findURITest() {
-		when(annotationDesc.elementValues()).thenReturn(new ElementValuePair[0]);
-		
+		when(annotationDesc.elementValues())
+				.thenReturn(new ElementValuePair[0]);
+
 		String result = vraptorRestDoclet.findServiceURI(annotationDesc);
 		assertEquals("", result);
 
 		when(annotationValue.toString()).thenReturn(RestDocAttributes.PATH_URI);
 		when(elementValuePair.value()).thenReturn(annotationValue);
-		when(annotationDesc.elementValues()).thenReturn(new ElementValuePair[] { elementValuePair } );
-		
-		assertEquals(RestDocAttributes.PATH_URI, vraptorRestDoclet.findServiceURI(annotationDesc));
+		when(annotationDesc.elementValues()).thenReturn(
+				new ElementValuePair[] { elementValuePair });
+
+		assertEquals(RestDocAttributes.PATH_URI,
+				vraptorRestDoclet.findServiceURI(annotationDesc));
 	}
 
 	@Test
 	public void getRequestTypeTest() {
 		when(annotationDesc.annotationType()).thenReturn(annotationTypeDoc);
-		
+
 		String result = vraptorRestDoclet.getRequestType(annotationDesc);
 		assertNull(result);
 
-		when(annotationTypeDoc.qualifiedTypeName()).thenReturn(RestAnnotation.GET.toString());
+		when(annotationTypeDoc.qualifiedTypeName()).thenReturn(
+				RestAnnotation.GET.toString());
 		result = vraptorRestDoclet.getRequestType(annotationDesc);
 		assertEquals("get", result.toLowerCase());
-		
-		when(annotationTypeDoc.qualifiedTypeName()).thenReturn(RestAnnotation.POST.toString());
+
+		when(annotationTypeDoc.qualifiedTypeName()).thenReturn(
+				RestAnnotation.POST.toString());
 		result = vraptorRestDoclet.getRequestType(annotationDesc);
 		assertEquals("post", result.toLowerCase());
 	}
 
 	@Test
 	public void getMethodRestAnnotationTest() {
-		when(methodDoc.annotations()).thenReturn(new AnnotationDesc[] { annotationDesc });
+		when(methodDoc.annotations()).thenReturn(
+				new AnnotationDesc[] { annotationDesc });
 		when(annotationDesc.annotationType()).thenReturn(annotationTypeDoc);
 		when(annotationTypeDoc.qualifiedTypeName()).thenReturn("");
 		// method isn't a service
 		assertNull(vraptorRestDoclet.getMethodRestAnnotation(methodDoc));
-		
+
 		// method is a service
-		when(annotationTypeDoc.qualifiedTypeName()).thenReturn(RestAnnotation.GET.toString());
-		assertEquals(annotationDesc, vraptorRestDoclet.getMethodRestAnnotation(methodDoc));
+		when(annotationTypeDoc.qualifiedTypeName()).thenReturn(
+				RestAnnotation.GET.toString());
+		assertEquals(annotationDesc,
+				vraptorRestDoclet.getMethodRestAnnotation(methodDoc));
 	}
 
 	@Test
 	public void createServiceTest() {
 		setRootDocMock();
-		
-		RestService expected = new RestService.Builder(RestDocAttributes.PATH_URI, "Get")
-		.wihtParameters(RestDocAttributes.PARAMS).withCalls(RestDocAttributes.CALLS)
-		.withDescription(RestDocAttributes.DESCRIPTION).withExceptionThrows(RestDocAttributes.THROWS)
-		.withReturnExample(RestDocAttributes.RETURN_EXAMPLE).withReturns(RestDocAttributes.RETURN)
-		.withServiceMethod(RestDocAttributes.QUALIFIED_NAME + RestDocAttributes.SIGNATURE).build();
-		
+
+		RestService expected = new RestService.Builder(
+				RestDocAttributes.PATH_URI, "Get")
+				.wihtParameters(RestDocAttributes.PARAMS)
+				.withCalls(RestDocAttributes.CALLS)
+				.withDescription(RestDocAttributes.DESCRIPTION)
+				.withExceptionThrows(RestDocAttributes.THROWS)
+				.withReturnExample(RestDocAttributes.RETURN_EXAMPLE)
+				.withReturns(RestDocAttributes.RETURN)
+				.withServiceMethod(
+						RestDocAttributes.QUALIFIED_NAME
+								+ RestDocAttributes.SIGNATURE).build();
+
 		RestService actual = vraptorRestDoclet.createServiceDoc(methodDoc, "");
 		assertEquals(expected, actual);
 	}
@@ -119,45 +132,67 @@ public class VRaptorRestDocletTest {
 	@Test
 	public void testFindRESTService() throws Exception {
 		setRootDocMock();
-		
-		List<RestService> services = vraptorRestDoclet.findRestServices(rootDoc);
+
+		List<RestService> services = vraptorRestDoclet
+				.findRestServices(rootDoc);
 		assertNotNull(services);
 		assertEquals(services.size(), 1);
-		
-		RestService expected = new RestService.Builder(RestDocAttributes.PATH_URI + RestDocAttributes.PATH_URI, "Get")
-		.wihtParameters(RestDocAttributes.PARAMS).withCalls(RestDocAttributes.CALLS)
-		.withDescription(RestDocAttributes.DESCRIPTION).withExceptionThrows(RestDocAttributes.THROWS)
-		.withReturnExample(RestDocAttributes.RETURN_EXAMPLE).withReturns(RestDocAttributes.RETURN)
-		.withServiceMethod(RestDocAttributes.QUALIFIED_NAME + RestDocAttributes.SIGNATURE).build();
-		
+
+		RestService expected = new RestService.Builder(
+				RestDocAttributes.PATH_URI + RestDocAttributes.PATH_URI, "Get")
+				.wihtParameters(RestDocAttributes.PARAMS)
+				.withCalls(RestDocAttributes.CALLS)
+				.withDescription(RestDocAttributes.DESCRIPTION)
+				.withExceptionThrows(RestDocAttributes.THROWS)
+				.withReturnExample(RestDocAttributes.RETURN_EXAMPLE)
+				.withReturns(RestDocAttributes.RETURN)
+				.withServiceMethod(
+						RestDocAttributes.QUALIFIED_NAME
+								+ RestDocAttributes.SIGNATURE).build();
+
 		assertEquals(expected, services.get(0));
 	}
-	
-	private void setRootDocMock(){
+
+	private void setRootDocMock() {
 		when(rootDoc.classes()).thenReturn(new ClassDoc[] { classDoc });
-		when(classDoc.annotations()).thenReturn(new AnnotationDesc[] { controllerAnnotationDesc });
-		when(controllerAnnotationDesc.annotationType()).thenReturn(controllerAnnotationTypeDoc);
-		when(controllerAnnotationTypeDoc.qualifiedTypeName()).thenReturn(RestAnnotation.PATH.toString());
-		when(controllerAnnotationValue.toString()).thenReturn(RestDocAttributes.PATH_URI);
-		when(controllerAnnotationDesc.elementValues()).thenReturn(new ElementValuePair[] { controllerElementValuePair } );
-		when(controllerElementValuePair.value()).thenReturn(controllerAnnotationValue);
+		when(classDoc.annotations()).thenReturn(
+				new AnnotationDesc[] { controllerAnnotationDesc });
+		when(controllerAnnotationDesc.annotationType()).thenReturn(
+				controllerAnnotationTypeDoc);
+		when(controllerAnnotationTypeDoc.qualifiedTypeName()).thenReturn(
+				RestAnnotation.PATH.toString());
+		when(controllerAnnotationValue.toString()).thenReturn(
+				RestDocAttributes.PATH_URI);
+		when(controllerAnnotationDesc.elementValues()).thenReturn(
+				new ElementValuePair[] { controllerElementValuePair });
+		when(controllerElementValuePair.value()).thenReturn(
+				controllerAnnotationValue);
 		when(classDoc.methods()).thenReturn(new MethodDoc[] { methodDoc });
 		setMethodDocMock();
 	}
-	
-	private void setMethodDocMock(){
-		when(methodDoc.annotations()).thenReturn(new AnnotationDesc[] { annotationDesc });
-		when(methodDoc.qualifiedName()).thenReturn(RestDocAttributes.QUALIFIED_NAME);
+
+	private void setMethodDocMock() {
+		when(methodDoc.annotations()).thenReturn(
+				new AnnotationDesc[] { annotationDesc });
+		when(methodDoc.qualifiedName()).thenReturn(
+				RestDocAttributes.QUALIFIED_NAME);
 		when(methodDoc.signature()).thenReturn(RestDocAttributes.SIGNATURE);
 		when(methodDoc.commentText()).thenReturn(RestDocAttributes.DESCRIPTION);
-		when(methodDoc.tags(VRaptorRestDoclet.PARAM_TAG_ANNOTATION)).thenReturn(new Tag[] { tag });
-		when(methodDoc.tags(VRaptorRestDoclet.RETURN_TAG_ANNOTATION)).thenReturn(new Tag[] { tag });
-		when(methodDoc.tags(VRaptorRestDoclet.RETURN_EXAMPLE_TAG_ANNOTATION)).thenReturn(new Tag[] { tag });
-		when(methodDoc.tags(VRaptorRestDoclet.THROWS_TAG_ANNOTATION)).thenReturn(new Tag[] { tag });
-		when(methodDoc.tags(VRaptorRestDoclet.CALLS_TAG_ANNOTATION)).thenReturn(new Tag[] { tag });
+		when(methodDoc.tags(VRaptorRestDoclet.PARAM_TAG_ANNOTATION))
+				.thenReturn(new Tag[] { tag });
+		when(methodDoc.tags(VRaptorRestDoclet.RETURN_TAG_ANNOTATION))
+				.thenReturn(new Tag[] { tag });
+		when(methodDoc.tags(VRaptorRestDoclet.RETURN_EXAMPLE_TAG_ANNOTATION))
+				.thenReturn(new Tag[] { tag });
+		when(methodDoc.tags(VRaptorRestDoclet.THROWS_TAG_ANNOTATION))
+				.thenReturn(new Tag[] { tag });
+		when(methodDoc.tags(VRaptorRestDoclet.CALLS_TAG_ANNOTATION))
+				.thenReturn(new Tag[] { tag });
 		when(annotationDesc.annotationType()).thenReturn(annotationTypeDoc);
-		when(annotationDesc.elementValues()).thenReturn(new ElementValuePair[] { elementValuePair } );
-		when(annotationTypeDoc.qualifiedTypeName()).thenReturn(RestAnnotation.GET.toString());
+		when(annotationDesc.elementValues()).thenReturn(
+				new ElementValuePair[] { elementValuePair });
+		when(annotationTypeDoc.qualifiedTypeName()).thenReturn(
+				RestAnnotation.GET.toString());
 		when(annotationValue.toString()).thenReturn(RestDocAttributes.PATH_URI);
 		when(elementValuePair.value()).thenReturn(annotationValue);
 		when(tag.text()).thenReturn("text");

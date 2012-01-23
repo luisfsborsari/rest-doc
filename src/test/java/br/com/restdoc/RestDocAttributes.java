@@ -21,5 +21,4 @@ public interface RestDocAttributes {
 	String RETURN_EXAMPLE = "text";
 	List<String> THROWS = new ArrayList<String>(Arrays.asList("text"));;
 	List<String> CALLS = new ArrayList<String>(Arrays.asList("text"));;
-
 }

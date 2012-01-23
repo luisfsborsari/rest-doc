@@ -49,17 +49,20 @@ public class RestServiceMojoTest extends AbstractMojoTestCase {
 	}
 
 	private RestServiceMojo getRestDocMojo() throws Exception {
-		File testPom = new File(getBasedir() + "/src/test/resources/", "fake-pom.xml");
+		File testPom = new File(getBasedir() + "/src/test/resources/",
+				"fake-pom.xml");
 		return (RestServiceMojo) lookupMojo("rest-doc", testPom);
 
 	}
-	
+
 	private String getClasspath() throws Exception {
 		RestServiceMojo mojo = getRestDocMojo();
 
-		List<String> classpath = new LinkedList<String>((Arrays.asList(mojo.getProject().getBuild()
-				.getOutputDirectory(), FakeArtifacts.VRAPTOR.getFile().toString(), FakeArtifacts.HIBERNATE.getFile()
-				.toString(), FakeArtifacts.GSON.getFile().toString())));
+		List<String> classpath = new LinkedList<String>((Arrays.asList(mojo
+				.getProject().getBuild().getOutputDirectory(),
+				FakeArtifacts.VRAPTOR.getFile().toString(),
+				FakeArtifacts.HIBERNATE.getFile().toString(),
+				FakeArtifacts.GSON.getFile().toString())));
 		return StringUtils.join(classpath.iterator(), File.pathSeparator);
 	}
 }

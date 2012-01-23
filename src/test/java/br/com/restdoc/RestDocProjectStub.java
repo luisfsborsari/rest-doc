@@ -16,7 +16,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  *         20/06/2011 11:47:38
  */
 public class RestDocProjectStub extends MavenProjectStub {
-	
+
 	public RestDocProjectStub() throws IOException, XmlPullParserException {
 		setProjectModel();
 		setProjectProperties();
@@ -26,7 +26,8 @@ public class RestDocProjectStub extends MavenProjectStub {
 
 	private void setProjectModel() throws IOException, XmlPullParserException {
 		MavenXpp3Reader pomReader = new MavenXpp3Reader();
-		Model model = pomReader.read(ReaderFactory.newXmlReader(new File(getBasedir() + "/src/test/resources/", "fake-pom.xml")));
+		Model model = pomReader.read(ReaderFactory.newXmlReader(new File(
+				getBasedir() + "/src/test/resources/", "fake-pom.xml")));
 		setModel(model);
 	}
 
@@ -39,7 +40,7 @@ public class RestDocProjectStub extends MavenProjectStub {
 		setUrl(model.getUrl());
 		setPackaging(model.getPackaging());
 	}
-	
+
 	private void setProjectBuild() {
 		Model model = getModel();
 		Build build = new Build();
@@ -49,5 +50,5 @@ public class RestDocProjectStub extends MavenProjectStub {
 		build.setOutputDirectory(getBasedir().toString());
 		setBuild(build);
 	}
-	
+
 }
