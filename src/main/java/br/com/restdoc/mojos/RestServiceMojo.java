@@ -1,17 +1,7 @@
 package br.com.restdoc.mojos;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.PatternSyntaxException;
-
+import br.com.restdoc.doclets.VRaptorRestDoclet;
+import br.com.restdoc.util.Utils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -22,8 +12,11 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.StringUtils;
 
-import br.com.restdoc.doclets.VRaptorRestDoclet;
-import br.com.restdoc.util.Utils;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.util.*;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Goal which generates a javaScript file with the VRaptor REST Services docs in
@@ -34,6 +27,7 @@ import br.com.restdoc.util.Utils;
  * @phase compile
  */
 public class RestServiceMojo extends AbstractMojo {
+
 	/**
 	 * The Maven Project Object
 	 * 
@@ -79,6 +73,11 @@ public class RestServiceMojo extends AbstractMojo {
 	 * @required
 	 */
 	private String sourcePath;
+
+    /**
+     * @parameter
+     */
+    private String jsonName;
 
 	private File sourceDir;
 
@@ -252,6 +251,9 @@ public class RestServiceMojo extends AbstractMojo {
 			javadocParameters.add("-docletpath");
 			javadocParameters.add(".");
 
+            addJsonNameParamIfItHasOne(javadocParameters, VRaptorRestDoclet.JSON_NAME_OPTION);
+
+
 			FileFilter fileFilter = new RegexFileFilter(serviceFileNamePattern);
 			Utils.findFiles(sourceDir, javadocParameters, fileFilter);
 
@@ -267,4 +269,11 @@ public class RestServiceMojo extends AbstractMojo {
 			throw new MojoExecutionException("Error while getting classpath", e);
 		}
 	}
+
+    private void addJsonNameParamIfItHasOne(List<String> javadocParameters, String optionName) {
+        if(jsonName != null && !jsonName.isEmpty()) {
+            javadocParameters.add(optionName);
+            javadocParameters.add(jsonName);
+        }
+    }
 }

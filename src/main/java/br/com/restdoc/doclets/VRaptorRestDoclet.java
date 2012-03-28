@@ -1,5 +1,13 @@
 package br.com.restdoc.doclets;
 
+import br.com.restdoc.RestAnnotation;
+import br.com.restdoc.RestService;
+import br.com.restdoc.mojos.RestServiceMojo;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.sun.javadoc.*;
+import com.sun.javadoc.AnnotationDesc.ElementValuePair;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -7,27 +15,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import br.com.restdoc.RestAnnotation;
-import br.com.restdoc.RestService;
-import br.com.restdoc.mojos.RestServiceMojo;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.sun.javadoc.AnnotationDesc;
-import com.sun.javadoc.AnnotationDesc.ElementValuePair;
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.MethodDoc;
-import com.sun.javadoc.RootDoc;
-import com.sun.javadoc.Tag;
-
-/**
- * @author Danilo Buiatti Lamounier
- * 
- *         06/06/2011 09:34:21
- */
 public class VRaptorRestDoclet {
 
 	public static final String PATH = VRaptorRestDoclet.class.getName();
+    public static final String JSON_NAME_OPTION = "-jsonName";
 
 	static final String PARAM_TAG_ANNOTATION = "@param";
 	static final String RETURN_TAG_ANNOTATION = "@return";
@@ -38,14 +29,41 @@ public class VRaptorRestDoclet {
 	public static boolean start(RootDoc root) throws Exception {
 		VRaptorRestDoclet doclet = new VRaptorRestDoclet();
 		List<RestService> restServices = doclet.findRestServices(root);
-		String servicesJson = VRaptorRestDoclet.createGson().toJson(restServices).replaceAll(
+        String servicesJson = hasNamedJson(root.options()) ? getJsonName(root.options()) + " = " : "";
+        servicesJson += VRaptorRestDoclet.createGson().toJson(restServices).replaceAll(
 				"(\\\\n|\\\\t)", "");
 		VRaptorRestDoclet.writeFile(servicesJson,
 				RestServiceMojo.getOutputFile());
 		return true;
 	}
 
-	private static Gson createGson() {
+    public static int optionLength(String option) {
+        if(option.equals(JSON_NAME_OPTION)) {
+            return 2;
+        }
+        return 0;
+    }
+
+    private static String getJsonName(String[][] options) {
+        for(String option[] : options){
+            if(JSON_NAME_OPTION.equals(option[0])){
+                return option[1];
+            }
+        }
+        return "";
+    }
+
+    private static boolean hasNamedJson(String[][] options) {
+        for(String option[] : options){
+            if(JSON_NAME_OPTION.equals(option[0])){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    private static Gson createGson() {
 		return new GsonBuilder().setPrettyPrinting().create();
 	}
 
