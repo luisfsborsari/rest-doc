@@ -29,7 +29,7 @@ public class VRaptorRestDoclet {
 	public static boolean start(RootDoc root) throws Exception {
 		VRaptorRestDoclet doclet = new VRaptorRestDoclet();
 		List<RestService> restServices = doclet.findRestServices(root);
-        String servicesJson = hasNamedJson(root.options()) ? getJsonName(root.options()) + " = " : "";
+        String servicesJson = hasJsonNameOption(root.options()) ? getJsonName(root.options()) + " = " : "";
         servicesJson += VRaptorRestDoclet.createGson().toJson(restServices).replaceAll(
 				"(\\\\n|\\\\t)", "");
 		VRaptorRestDoclet.writeFile(servicesJson,
@@ -53,7 +53,7 @@ public class VRaptorRestDoclet {
         return "";
     }
 
-    private static boolean hasNamedJson(String[][] options) {
+    private static boolean hasJsonNameOption(String[][] options) {
         for(String option[] : options){
             if(JSON_NAME_OPTION.equals(option[0])){
                 return true;
