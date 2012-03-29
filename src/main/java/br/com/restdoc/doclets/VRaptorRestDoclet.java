@@ -2,7 +2,6 @@ package br.com.restdoc.doclets;
 
 import br.com.restdoc.RestAnnotation;
 import br.com.restdoc.RestService;
-import br.com.restdoc.mojos.RestServiceMojo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.javadoc.*;
@@ -19,6 +18,7 @@ public class VRaptorRestDoclet {
 
 	public static final String PATH = VRaptorRestDoclet.class.getName();
     public static final String JSON_NAME_OPTION = "-jsonName";
+    public static final String OUTPUT_FILE_URI = "-outputURI";
 
 	static final String PARAM_TAG_ANNOTATION = "@param";
 	static final String RETURN_TAG_ANNOTATION = "@return";
@@ -29,24 +29,45 @@ public class VRaptorRestDoclet {
 	public static boolean start(RootDoc root) throws Exception {
 		VRaptorRestDoclet doclet = new VRaptorRestDoclet();
 		List<RestService> restServices = doclet.findRestServices(root);
-        String servicesJson = hasJsonNameOption(root.options()) ? getJsonName(root.options()) + " = " : "";
+        String servicesJson = hasJsonNameOption(root.options()) ? getOptionValue(root.options(),
+                JSON_NAME_OPTION) + " = " : "";
         servicesJson += VRaptorRestDoclet.createGson().toJson(restServices).replaceAll(
 				"(\\\\n|\\\\t)", "");
 		VRaptorRestDoclet.writeFile(servicesJson,
-				RestServiceMojo.getOutputFile());
+				createOutputFile(getOptionValue(root.options(), OUTPUT_FILE_URI)));
 		return true;
 	}
 
+    private static File createOutputFile(String fileUri) throws IOException {
+        File file = new File(fileUri);
+        deleteFileIfAlreadyExists(file);
+        createOuput(file);
+
+        return file;
+    }
+
+    private static void createOuput(File file) throws IOException {
+        if(!file.createNewFile()){
+            throw new IOException("Could not create ouput file.");
+        }
+    }
+
+    private static void deleteFileIfAlreadyExists(File file) throws IOException {
+        if(file.exists() && !file.delete()){
+            throw new IOException("The output file could not be deleted.");
+        }
+    }
+
     public static int optionLength(String option) {
-        if(option.equals(JSON_NAME_OPTION)) {
+        if(option.equals(JSON_NAME_OPTION) || option.equals(OUTPUT_FILE_URI)) {
             return 2;
         }
         return 0;
     }
 
-    private static String getJsonName(String[][] options) {
+    private static String getOptionValue(String[][] options, String optionName) {
         for(String option[] : options){
-            if(JSON_NAME_OPTION.equals(option[0])){
+            if(optionName.equals(option[0])){
                 return option[1];
             }
         }
@@ -61,6 +82,7 @@ public class VRaptorRestDoclet {
         }
         return false;
     }
+    
 
 
     private static Gson createGson() {

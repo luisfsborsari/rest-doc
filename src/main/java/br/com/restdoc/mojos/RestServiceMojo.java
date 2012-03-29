@@ -14,7 +14,6 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import java.util.*;
 import java.util.regex.PatternSyntaxException;
 
@@ -81,31 +80,8 @@ public class RestServiceMojo extends AbstractMojo {
 
 	private File sourceDir;
 
-	private File outputDir;
-
-	private static File outputFile;
-
-	/**
-	 * Classe doclet é responsável por salvar conteudo do arquivo
-	 */
-	public static File getOutputFile() {
-		return outputFile;
-	}
-
-	public static void setOutputFile(File outputFileParam) {
-		outputFile = outputFileParam;
-	}
-
-	String getOutputFileName() {
-		return outputFileName;
-	}
-
 	File getSourceDir() {
 		return sourceDir;
-	}
-
-	File getOutputDir() {
-		return outputDir;
 	}
 
 	MavenProject getProject() {
@@ -121,47 +97,9 @@ public class RestServiceMojo extends AbstractMojo {
 		return file;
 	}
 
-	private void deleteOuputFile(File outputFile) throws MojoExecutionException {
-		if (!outputFile.delete()) {
-			throw new MojoExecutionException("File "
-					+ outputFile.getAbsolutePath() + " could not be deleted");
-		}
-	}
-
-	private File createOutputFileOnSuccess(File outputDir, String outputFileName)
-			throws MojoExecutionException {
-		try {
-			File ouputFile = new File(outputDir, outputFileName);
-			if (!new File(outputDir, outputFileName).createNewFile()) {
-				throw new MojoExecutionException("File "
-						+ outputFile.getAbsolutePath()
-						+ " could not be created");
-			}
-			return ouputFile;
-		} catch (IOException e) {
-			throw new MojoExecutionException("File "
-					+ outputFile.getAbsolutePath() + " could not be created");
-		}
-	}
-
-	private File createOutputFile(File outputDir, String outputFileName)
-			throws MojoExecutionException {
-		File outputFile = new File(outputDir, outputFileName);
-		if (outputFile.exists()) {
-			getLog().info(
-					"File " + outputFile.getAbsolutePath()
-							+ " already exists and will be overwrited");
-			deleteOuputFile(outputFile);
-		}
-		return createOutputFileOnSuccess(outputDir, outputFileName);
-	}
-
 	void filesTreatment() throws MojoExecutionException {
 		sourceDir = tryToCreateDir(sourceDirectory, "Source directory "
 				+ sourceDirectory + " doesn't exists");
-		outputDir = tryToCreateDir(outputDirectory, "Output directory "
-				+ outputDirectory + " doesn't exists");
-		outputFile = createOutputFile(outputDir, outputFileName);
 	}
 
 	String getClasspath() throws MavenReportException {
@@ -250,6 +188,8 @@ public class RestServiceMojo extends AbstractMojo {
 			javadocParameters.add(sourcePath);
 			javadocParameters.add("-docletpath");
 			javadocParameters.add(".");
+            javadocParameters.add(VRaptorRestDoclet.OUTPUT_FILE_URI);
+            javadocParameters.add(outputDirectory + outputFileName);
 
             addJsonNameParamIfItHasOne(javadocParameters, VRaptorRestDoclet.JSON_NAME_OPTION);
 

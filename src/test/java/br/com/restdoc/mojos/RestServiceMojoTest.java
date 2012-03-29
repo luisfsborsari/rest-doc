@@ -1,15 +1,13 @@
 package br.com.restdoc.mojos;
 
+import br.com.restdoc.FakeArtifacts;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.codehaus.plexus.util.StringUtils;
-
-import br.com.restdoc.FakeArtifacts;
-import br.com.restdoc.mojos.RestServiceMojo;
 
 public class RestServiceMojoTest extends AbstractMojoTestCase {
 
@@ -21,11 +19,6 @@ public class RestServiceMojoTest extends AbstractMojoTestCase {
 	protected void tearDown() throws Exception {
 		// required
 		super.tearDown();
-
-		File outputFile = RestServiceMojo.getOutputFile();
-		if (outputFile != null) {
-			outputFile.delete();
-		}
 	}
 
 	public void testRestDocPom() throws Exception {
@@ -36,9 +29,7 @@ public class RestServiceMojoTest extends AbstractMojoTestCase {
 	public void testConfigurationProperties() throws Exception {
 		RestServiceMojo mojo = getRestDocMojo();
 		mojo.filesTreatment();
-		assertTrue(mojo.getOutputDir().exists());
 		assertTrue(mojo.getSourceDir().exists());
-		assertTrue(RestServiceMojo.getOutputFile().exists());
 	}
 
 	public void testGetClasspath() throws Exception {
